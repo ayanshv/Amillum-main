@@ -1,0 +1,125 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+vn/
+VN/
+[vV][nN]/
+**/vn/
+
+
+
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.local
+.env.*
+
+# API Keys
+secrets.toml
+
+# =========================
+# Streamlit
+# =========================
+.streamlit/secrets.toml
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# macOS
+# =========================
+.DS_Store
+
+# =========================
+# Windows
+# =========================
+Thumbs.db
+Desktop.ini
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# Testing
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# FAISS / Vector Databases
+# =========================
+vector_store/
+faiss_index/
+*.faiss
+
+# =========================
+# Uploaded User Documents
+# =========================
+uploads/
+temp/
+tmp/
+
+# =========================
+# OCR Outputs
+# =========================
+ocr_output/
+parsed_documents/
+
+# =========================
+# AI Model Files
+# =========================
+models/
+*.gguf
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# =========================
+# Generated Embeddings
+# =========================
+embeddings/
+cache/
+
+# =========================
+# Local Databases
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# OS / Misc
+# =========================
+*.swp
+*.swo
+*~
