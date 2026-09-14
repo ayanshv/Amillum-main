@@ -1,4 +1,8 @@
+from components.email_draft import email_draft_button
+from services.auth import protected, current, checked_operation
 from nicegui import ui, run
+from services.supabase import get_account
+from components.workbench import analysis_save_button
 from components.mascot import mascot
 from components.shell import shell
 from components.primitives import page_heading, primary_button
@@ -34,7 +38,9 @@ LANGUAGES = [
 
 
 @ui.page('/analyze')
+@protected
 def analyze():
+    account = get_account()
     pending = {}
 
     def show_upload_error(message):
@@ -42,6 +48,7 @@ def analyze():
         upload_error.set_visibility(True)
 
     async def process_file(e):
+        if not current(account):return
         if workspace.snapshot()['status'] in ('extracting','analyzing'):
             show_upload_error('A document is already being analyzed. Wait for it to finish or clear the current document.')
             return
@@ -53,6 +60,7 @@ def analyze():
         await continue_upload()
 
     async def continue_upload():
+        if not current(account):return
         if not pending:
             return
         if not language_select.value:
@@ -81,13 +89,14 @@ def analyze():
             if not extracted_text or not extracted_text.strip():
                 workspace.finish(revision, error='No readable text found. Try a clearer document or image.')
             elif workspace.extracted(revision, extracted_text):
-                result = await run.io_bound(analyze_document, extracted_text, question, language)
+                result = await run.io_bound(checked_operation, account, analyze_document, extracted_text, question, language)
                 workspace.finish(revision, result=result or '', error='' if result else 'The analysis service returned no explanation. Please try again.')
         except Exception:
             workspace.finish(revision, error='We couldn’t analyze this document. Check your connection and analysis configuration, then try again.')
         # A client may have navigated back to Workspace. Its timer reads shared state.
 
     def reset_ui():
+        if not current(account):return
         pending.clear()
         upload_error.set_visibility(False)
         continue_button.set_visibility(False)
@@ -144,6 +153,13 @@ def analyze():
                 result_markdown = ui.markdown().classes('amicus-markdown w-full')
                 ui.label('Informational guidance. Verify important details with a qualified professional.').classes('fine-print')
                 with ui.row().classes('result-actions'):
+                    @ui.refreshable
+                    def save_finding():
+                        snapshot=workspace.snapshot()
+                        if snapshot['status']=='ready':
+                            email_draft_button(account,'document')
+                            analysis_save_button(account,source={'id':snapshot['document_id'],'kind':'document','title':snapshot['filename'][:240]})
+                    save_finding()
                     primary_button('Ask a follow-up', lambda: ui.navigate.to('/'), 'arrow_forward')
                     ui.button('Open another document', on_click=reset_ui).props('flat')
 
@@ -155,6 +171,7 @@ def analyze():
             return
         last_render[0] = key
         document_beaver.refresh()
+        save_finding.refresh()
         busy = snapshot['status'] in ('extracting', 'analyzing')
         setup.set_visibility(snapshot['status'] == 'empty')
         heading.set_text('Open a document' if snapshot['status'] == 'empty' else (snapshot['filename'] or 'Your document'))

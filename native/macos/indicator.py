@@ -24,6 +24,7 @@ class ContextIndicator:
         self.target = IndicatorTarget.alloc().init()
         self.target.owner = self
         self.label = None
+        self.level = None
         self.persistent = False
 
     def start(self, open_workspace, open_settings, quit_app):
@@ -35,7 +36,9 @@ class ContextIndicator:
 
     def update(self, suggestion):
         label = suggestion.get('label') if suggestion else None
-        if label != self.label:
+        level=suggestion.get('assistance','suggestion') if suggestion else None
+        if label != self.label or level != self.level:
+            self.level=level
             self.label = label
             self.render()
 
@@ -45,11 +48,11 @@ class ContextIndicator:
             return
         if self.item is None:
             self.item = AK.NSStatusBar.systemStatusBar().statusItemWithLength_(AK.NSVariableStatusItemLength)
-        icon=native_image('found' if self.label else 'idle').copy()
+        icon=native_image(('curious' if self.level=='indicator' else 'found') if self.label else 'idle').copy()
         icon.setSize_(AK.NSMakeSize(23,27))
         self.item.button().setImage_(icon)
         self.item.button().setTitle_('')
-        self.item.button().setToolTip_('Amillum — ' + ('possible legal document; no document text read' if self.label else 'Open workspace or settings'))
+        self.item.button().setToolTip_('Amillum — ' + ('possible legal context; local signals only, no AI analysis' if self.label else 'Open workspace or settings'))
         menu = AK.NSMenu.alloc().init()
 
         def action(title, selector):

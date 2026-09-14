@@ -77,6 +77,9 @@ class BridgeServer:
                         send_message(connection, {'error': 'unauthorized'})
                     elif message.get('op') == 'policy':
                         send_message(connection, self.state.heartbeat())
+                    elif message.get('op') == 'clear_suggestion':
+                        self.state.clear_suggestion()
+                        send_message(connection, {'accepted':True})
                     elif message.get('op') == 'panel_state':
                         send_message(connection, self.state.panel_state())
                     elif message.get('op') == 'cancel_context' and isinstance(message.get('payload'),dict):
@@ -84,7 +87,9 @@ class BridgeServer:
                     elif message.get('op') == 'publish' and isinstance(message.get('payload'), dict):
                         send_message(connection, {'accepted': self.state.publish(message['payload'])})
                     elif message.get('op') == 'begin_context' and isinstance(message.get('payload'), dict):
-                        send_message(connection, self.state.begin_context(message['payload']))
+                        from services.supabase import active_account
+                        account=active_account()
+                        send_message(connection, self.state.begin_context(message['payload']) if account and account.user_id else {'error':'Sign in to Amillum before selecting content.'})
                     elif message.get('op') == 'finish_context' and isinstance(message.get('payload'), dict):
                         send_message(connection, {'accepted': self.state.finish_context(message['payload'])})
                     elif message.get('op') == 'context_valid' and isinstance(message.get('payload'), dict):

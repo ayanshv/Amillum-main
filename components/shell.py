@@ -17,6 +17,7 @@ def shell(active):
             with ui.element('nav').classes('studio-nav').props('aria-label="Main navigation"'):
                 for title, icon, path, key in [('Workspace', 'window', '/', 'home'),
                     ('Documents', 'description', '/analyze', 'analysis'),
+                    ('Workbench', 'checklist', '/workbench', 'workbench'),
                     ('Selection review', 'crop_free', '/context', 'context')]:
                     with ui.link(target=path).classes('studio-nav-item' + (' is-active' if active == key else '')).props(f'aria-label="{title}" ' + ('aria-current="page"' if active == key else '')):
                         ui.icon(icon, size='18px')
@@ -49,8 +50,9 @@ def shell(active):
                     ui.label('Settings')
         with ui.element('div').classes('studio-body'):
             with ui.element('header').classes('studio-topbar'):
-                ui.label({'home':'Workspace', 'analysis':'Documents', 'settings':'Settings', 'info':'Help', 'context':'Selection review'}[active])
+                ui.label({'account':'Account', 'home':'Workspace', 'analysis':'Documents', 'settings':'Settings', 'info':'Help', 'context':'Selection review', 'workbench':'Workbench'}[active])
                 with ui.row().classes('toolbar-actions'):
+                    ui.link('Account', '/account').classes('toolbar-help')
                     ui.link('Help', '/info').classes('toolbar-help')
                     with ui.link(target='/settings').classes('toolbar-help').props('aria-label=Settings'):
                         ui.icon('tune',size='17px')

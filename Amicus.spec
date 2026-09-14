@@ -18,7 +18,7 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[str(Path(SPECPATH) / 'native' / 'macos' / 'frozen_hook.py')],
-    excludes=[],
+    excludes=['backend.api', 'backend.provider_engine'],
     noarchive=False,
     optimize=0,
 )

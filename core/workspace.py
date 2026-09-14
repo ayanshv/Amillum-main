@@ -1,5 +1,6 @@
 """One desktop session, in memory. Never saves documents or responses to disk."""
 from threading import RLock
+from uuid import uuid4
 
 
 class Workspace:
@@ -17,6 +18,7 @@ class Workspace:
             self.revision += 1
             self.question = ''
             self.draft_question = ''
+            self.document_id = None
             self.filename = ''
             self.text = ''
             self.result = ''
@@ -35,6 +37,7 @@ class Workspace:
             if self.status in ('extracting', 'analyzing'):
                 raise ValueError('An analysis is already running. Wait for it or clear the current document.')
             self.clear()
+            self.document_id = str(uuid4())
             self.filename = filename
             self.question = self.draft_question = question
             self.language = self.draft_language = language
@@ -73,7 +76,7 @@ class Workspace:
     def snapshot(self):
         with self.lock:
             # UI snapshots never copy raw document text.
-            return {key: getattr(self, key) for key in ('revision', 'filename', 'question', 'language', 'result', 'error', 'status', 'draft_question', 'draft_language')} | {'can_ask': bool(self.text) and self.status in ('ready', 'error')}
+            return {key: getattr(self, key) for key in ('revision', 'document_id', 'filename', 'question', 'language', 'result', 'error', 'status', 'draft_question', 'draft_language')} | {'can_ask': bool(self.text) and self.status in ('ready', 'error')}
 
 
 workspace = Workspace()

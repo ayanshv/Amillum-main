@@ -180,11 +180,22 @@ class AwarenessState:
                         self.metadata = {'status': 'metadata', 'role': role}
             suggestion = payload.get('suggestion')
             if self.smart_enabled and self.accessibility_enabled and self.accessibility_granted and isinstance(suggestion, dict):
-                from core.legal_context import SIGNALS
-                if suggestion.get('label') in SIGNALS:
-                    self.suggestion = {'label': suggestion['label'], 'score': .85}
+                from core.legal_context import SIGNALS, TYPES
+                from core.proactive import AssistanceConfig
+                score=suggestion.get('confidence')
+                if (self.metadata and self.metadata.get('status')=='metadata'
+                        and suggestion.get('label') in SIGNALS
+                        and suggestion.get('source_application') == identifier
+                        and isinstance(score,(int,float)) and AssistanceConfig.from_environment().indicator <= score <= 1):
+                    label=suggestion['label']
+                    self.suggestion = {'label':label, 'score':score, 'confidence':score,
+                        'legal_context':bool(suggestion.get('legal_context')),'context_type':TYPES[label],
+                        'reason':'Local legal-context signals','source_application':identifier}
             self.status = 'active'
             return True
+
+    def clear_suggestion(self):
+        with self.lock:self.suggestion=None
 
     def snapshot(self):
         with self.lock:

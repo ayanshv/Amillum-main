@@ -1,5 +1,9 @@
+from components.email_draft import email_draft_button
+from services.auth import protected, current, checked_operation
 """The desktop's working surface: current document, result, and explicit actions."""
 from nicegui import ui, run
+from services.supabase import get_account
+from components.workbench import analysis_save_button
 from components.mascot import mascot
 from components.shell import shell
 from components.primitives import page_heading, empty_state, primary_button
@@ -10,10 +14,13 @@ from backend.analyze import analyze_document
 
 @ui.page('/')
 @ui.page('/home')
+@protected
 def home():
+    account = get_account()
     previous = [None]
 
     async def ask():
+        if not current(account):return
         if not workspace.snapshot()['can_ask']:
             workspace.draft(question=question.value or '')
             ui.navigate.to('/analyze')
@@ -25,12 +32,13 @@ def home():
             return
         refresh()
         try:
-            result = await run.io_bound(analyze_document, text, question.value, language)
+            result = await run.io_bound(checked_operation, account, analyze_document, text, question.value, language)
             workspace.finish(revision, result=result or '', error='' if result else 'No explanation was returned. Please try again.')
         except Exception:
             workspace.finish(revision, error='The analysis service is unavailable. You can retry your question or open Documents.')
 
     def clear():
+        if not current(account):return
         workspace.clear()
         question.value = ''
         refresh()
@@ -77,6 +85,8 @@ def home():
                                 ui.label(snapshot['question']).classes('workspace-question')
                             ui.markdown(snapshot['result']).classes('amicus-markdown w-full')
                             ui.label('Informational guidance. Verify important details with a qualified professional.').classes('fine-print')
+                            email_draft_button(account,'document')
+                            analysis_save_button(account,source={'id':snapshot['document_id'],'kind':'document','title':snapshot['filename'][:240]})
                             ui.button('Clear current document', on_click=clear).props('flat dense')
                 document()
             @ui.refreshable

@@ -64,3 +64,41 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);f
 @media(prefers-reduced-motion:reduce){.q-btn,.studio-nav-item,.document-toolbar{transition:none}.q-btn:active:not(.disabled){transform:none}}
 
 .beaver-once{animation-iteration-count:1;animation-fill-mode:forwards}.selection-summary{display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--line);padding:22px 0;max-width:760px}.selection-summary .workspace-status{align-self:flex-start}
+
+/* Workbench uses the existing desktop surfaces; records remain a quiet list. */
+.workbench-content{max-width:1040px}.workbench-tools{gap:12px;align-items:center;margin:20px 0}.workbench-tools .q-field{min-width:150px}.workbench-signin{max-width:440px;padding:28px 0}.workbench-editor{width:560px;max-width:calc(100vw - 32px)!important;max-height:88vh;overflow-y:auto;padding:24px!important;gap:14px!important;border:1px solid var(--line);border-radius:14px!important}.workbench-row{display:flex;gap:16px;align-items:center;padding:18px 4px;border-bottom:1px solid var(--line)}.workbench-row:hover{background:#f0f4f9}.workbench-row-body{flex:1;min-width:0;gap:7px}.workbench-item-title{font-size:14px;font-weight:600;text-align:left;padding:0;justify-content:flex-start;max-width:100%;overflow-wrap:anywhere}.workbench-row-actions{gap:4px;flex-wrap:wrap;justify-content:flex-end}.workbench-source{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.workbench-due{font-size:12px;font-weight:600;color:var(--navy)}.workbench-message{padding:12px 0;color:#664f36;line-height:1.6}.workbench-candidate{align-items:center;gap:12px;width:100%;padding:12px 0;border-bottom:1px solid var(--line)}.workbench-candidate .body-copy{flex:1}.workbench-editor .q-field{min-width:0}@media(max-width:760px){.workbench-row{align-items:flex-start;flex-direction:column;gap:8px}.workbench-tools{gap:8px}.workbench-tools .q-field{flex:1;min-width:110px}.workbench-row-actions{justify-content:flex-start}}
+
+/* Authentication only. Local sky artwork; no external asset requests. */
+.auth-scene{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;width:100%;padding:36px 20px;overflow:hidden;background:#c5dce9}
+.auth-backdrop{position:absolute;inset:0;pointer-events:none;z-index:-2;background:linear-gradient(180deg,#c5ddea12,#f5f2e529),url('/images/auth-sky.png') center center/cover no-repeat,#c5dce9}
+.auth-orbits{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
+.auth-orbits span{position:absolute;left:50%;top:24%;width:125vw;height:125vw;min-width:1000px;min-height:1000px;border:1px solid #ffffff59;border-radius:50%;transform:translateX(-50%)}
+.auth-orbits span:nth-child(2){top:35%;width:143vw;height:143vw}.auth-orbits span:nth-child(3){top:47%;width:164vw;height:164vw}
+.auth-surface{width:min(464px,100%);padding:30px 36px 24px;gap:0;align-items:stretch;border:2px solid #fffffff0;border-radius:32px;background:rgba(249,250,250,.79);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);box-shadow:0 24px 64px #203d6021,0 3px 8px #203d6010;color:#203d60}
+.auth-emblem{align-self:center;display:grid;place-items:center;width:78px;height:78px;border-radius:50%;background:#f5f1e7;border:2px solid #fff;box-shadow:0 3px 14px #203d6008}
+.auth-wordmark{text-align:center;font-size:10px;font-weight:600;letter-spacing:3px;margin:12px 0 9px;color:#52677b}
+.auth-heading{text-align:center;font-family:var(--serif);font-weight:400;font-size:34px;line-height:1.14;letter-spacing:-.9px;color:#1d3552}
+.auth-subtitle{text-align:center;color:#566778;font-size:14px;line-height:1.6;margin:10px 0 24px}
+.auth-form{gap:15px}
+.auth-surface .q-field__control{border-radius:14px;background:#ffffff38;height:56px}
+.auth-surface .q-field--outlined .q-field__control:before{border-color:#50657b69}
+.auth-surface .q-field--outlined.q-field--focused .q-field__control:after{border-color:#203d60}
+.auth-surface .q-field__native,.auth-surface .q-field__input,.auth-surface .q-field__append{color:#203d60}
+.auth-surface .q-field__label{color:#526579}
+.auth-surface .auth-text-button{color:#294a6b!important;font-size:13px;letter-spacing:0;min-height:28px;padding:2px 4px;border-radius:6px}
+.auth-surface .auth-forgot{align-self:flex-end;margin-top:-7px;text-decoration:underline;text-underline-offset:3px}
+.auth-surface .auth-submit{min-height:48px;border-radius:14px;background:#203d60!important;color:#fff!important;font-size:15px;font-weight:500;letter-spacing:0;box-shadow:0 4px 12px #203d6014}
+.auth-surface .auth-submit:hover{background:#2b4f76!important}
+.auth-surface .auth-secondary{min-height:44px;border-radius:13px;color:#203d60;font-size:14px}
+.auth-switch{align-items:center;justify-content:center;gap:5px;margin-top:2px;font-size:13px;color:#596a7a}
+.auth-security{align-items:center;justify-content:center;flex-wrap:nowrap;gap:7px;margin-top:22px;padding-top:17px;border-top:1px solid #ffffffc9;font-size:11px;line-height:1.5;color:#57697b}
+.auth-hint{font-size:12px;color:#57697b;margin-top:-6px;line-height:1.5}
+.auth-status{align-items:center;flex-wrap:nowrap;gap:10px;margin:0 0 16px;padding:12px;border:1px solid #b6cadc;border-radius:12px;background:#edf3f8;color:#29465f;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.auth-status-error{border-color:#d5b5a9;background:#fcf1eb;color:#793d2f}
+.auth-surface .q-btn:focus-visible{outline:3px solid #7499bf;outline-offset:3px}
+@media(max-width:520px){.auth-scene{padding:20px 14px}.auth-surface{padding:26px 22px 22px;border-radius:27px}.auth-heading{font-size:30px}}
+@media(max-height:740px) and (min-width:521px){.auth-scene{padding:22px}.auth-surface{padding-top:24px;padding-bottom:20px}.auth-emblem{width:66px;height:66px}.auth-subtitle{margin-bottom:18px}.auth-security{margin-top:16px;padding-top:14px}}
+@media(prefers-reduced-transparency:reduce){.auth-surface{background:#f6f8fa;-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media(prefers-contrast:more){.auth-surface{background:#fff}.auth-surface .q-field__control:before{border-color:#203d60}.auth-subtitle,.auth-hint,.auth-security{color:#203d60}}
+
+.email-editor{width:620px;max-width:calc(100vw - 32px)!important;max-height:90vh;overflow-y:auto;padding:24px!important;border:1px solid var(--line);border-radius:18px!important;gap:14px}.email-review-body{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65;width:100%;padding:16px;background:var(--paper);border-radius:12px}.email-editor .q-field{min-width:0}

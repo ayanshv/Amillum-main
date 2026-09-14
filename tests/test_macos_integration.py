@@ -36,7 +36,7 @@ class MacOSIntegrationTests(unittest.TestCase):
             self.assertTrue(panel.window.isVisible())
             self.assertIn('ATTENTION · Moderate',panel.text.string())
             buttons={v.title():v for v in panel.window.contentView().subviews() if hasattr(v,'title')}
-            self.assertFalse(buttons['Add to Workbench'].isEnabled())
+            self.assertTrue(buttons['Add to Workbench'].isEnabled())
             buttons['Open Full Analysis'].performClick_(None);full.assert_called_once()
             buttons['Ask Amillum'].performClick_(None);ask.assert_called_once()
             panel.window.performClose_(None)
@@ -48,6 +48,37 @@ class MacOSIntegrationTests(unittest.TestCase):
             self.assertFalse(panel.window.isVisible())
             self.assertIsNone(panel.beaver.timer)
         finally:panel.close()
+
+    def test_awareness_never_inspects_its_own_ui(self):
+        from native.macos.application_context import ApplicationAwareness
+        tracker=ApplicationAwareness()
+        try:
+            tracker.policy={'enabled':True,'epoch':1,'excluded':[],'accessibility_enabled':True,'accessibility_granted':True}
+            with patch('native.macos.application_context.AK.NSWorkspace') as workspace, patch.object(tracker.reader,'focused_metadata') as read, patch.object(tracker.focus,'watch') as watch:
+                app=workspace.sharedWorkspace.return_value.frontmostApplication.return_value
+                app.bundleIdentifier.return_value='com.apple.python3'
+                app.processIdentifier.return_value=os.getpid()
+                tracker.sample()
+                read.assert_not_called();watch.assert_not_called()
+                self.assertEqual(tracker.pending.get_nowait()['status'],'unavailable')
+        finally:tracker.close()
+
+    def test_awareness_dispatches_once_and_discards_stale_work(self):
+        from native.macos.application_context import ApplicationAwareness
+        tracker=ApplicationAwareness()
+        try:
+            tracker.policy={'enabled':True,'epoch':1,'excluded':[],'accessibility_enabled':True,'accessibility_granted':True}
+            with patch('native.macos.application_context.AK.NSWorkspace') as workspace, patch.object(tracker.probes,'submit') as submit, patch.object(tracker.reader,'focused_metadata') as read, patch.object(tracker.focus,'watch'):
+                app=workspace.sharedWorkspace.return_value.frontmostApplication.return_value
+                app.bundleIdentifier.return_value='com.apple.TextEdit'
+                app.localizedName.return_value='TextEdit'
+                app.processIdentifier.return_value=os.getpid()+1
+                tracker.sample();tracker.sample()
+                submit.assert_called_once();read.assert_not_called()
+                tracker.policy['enabled']=False
+                tracker.deliver_probe({'epoch':1,'suggestion':{'label':'Contract'}},tracker.probe_generation-1)
+                self.assertTrue(tracker.pending.empty())
+        finally:tracker.close()
 
     def test_accessibility_observer_retains_a_native_callback(self):
         import ApplicationServices as AX
@@ -222,6 +253,72 @@ class MacOSIntegrationTests(unittest.TestCase):
                 self.assertEqual(tracker.pending.get_nowait(), {'epoch': 3, 'status': 'excluded'})
         finally:
             tracker.close()
+
+    def test_automatic_detection_checks_privacy_and_never_extracts(self):
+        from native.macos.application_context import ApplicationAwareness
+        from native.macos.region_reader import ReadBlocked
+        tracker=ApplicationAwareness()
+        try:
+            tracker.policy={'enabled':True,'epoch':1,'excluded':[], 'smart_enabled':True}
+            def deliver(function,*args):function(*args)
+            with patch.object(tracker.reader,'focused_metadata',return_value={'status':'metadata','bounds':[0,0,10,10]}), patch('native.macos.application_context.RegionReader') as factory, patch('native.macos.application_context.AppHelper.callAfter',side_effect=deliver), patch.object(tracker.indicator,'update') as indicator:
+                region=factory.return_value
+                region.attribute.return_value='Untitled'
+                region.sample.return_value='The employment agreement requires the employee to maintain confidentiality. The employer shall give notice before termination.'
+                tracker.inspect_context(123,'com.apple.Preview',tracker.policy,{'epoch':1},tracker.probe_generation)
+                payload=tracker.pending.get_nowait()
+                self.assertTrue(payload['suggestion']['legal_context'])
+                self.assertNotIn('_fingerprint',payload)
+                self.assertNotIn(region.sample.return_value,str(payload))
+                region.preflight.assert_called_once()
+                region.extract.assert_not_called()
+                region.sample.assert_called_once()
+                region.attribute.assert_called_once_with(region.window.return_value,'AXTitle')
+                region.preflight.side_effect=ReadBlocked('Sensitive field')
+                region.attribute.reset_mock()
+                tracker.inspect_context(123,'com.apple.Preview',tracker.policy,{'epoch':1},tracker.probe_generation)
+                self.assertNotIn('suggestion',tracker.pending.get_nowait())
+                region.attribute.assert_not_called()
+                indicator.assert_called_with(None)
+        finally:tracker.close()
+
+    def test_suggestion_panel_does_not_activate_and_buttons_are_explicit(self):
+        import AppKit as AK
+        from native.macos.suggestion_panel import SuggestionPanel
+        events=[];panel=SuggestionPanel(events.append)
+        before=AK.NSWorkspace.sharedWorkspace().frontmostApplication().processIdentifier()
+        try:
+            panel.show(b'fixture')
+            self.assertTrue(panel.window.styleMask() & AK.NSWindowStyleMaskNonactivatingPanel)
+            self.assertEqual(AK.NSWorkspace.sharedWorkspace().frontmostApplication().processIdentifier(),before)
+            generation=panel.generation
+            panel.show(b'fixture');self.assertEqual(panel.generation,generation)
+            panel.target.dismiss_(None);self.assertEqual(events,[False])
+            self.assertFalse(panel.window.isVisible())
+            panel.show(b'other');panel.target.accept_(None);self.assertEqual(events,[False,True])
+            panel.show(b'expire');panel.expire(panel.generation);self.assertIsNone(events[-1])
+        finally:panel.close()
+
+    def test_proactive_accept_starts_only_selection_and_respects_pause(self):
+        from unittest.mock import Mock
+        from native.macos.application_context import ApplicationAwareness
+        start=Mock();tracker=ApplicationAwareness(start)
+        tracker.source_identifier='com.apple.TextEdit'
+        tracker.policy={'epoch':4}
+        result={'confidence':.95,'legal_context':True}
+        try:
+            with patch('native.macos.application_context.AK.NSWorkspace') as workspace, patch('native.macos.application_context.request') as bridge, patch('native.macos.application_context.accessibility_granted',return_value=True):
+                workspace.sharedWorkspace.return_value.frontmostApplication.return_value.bundleIdentifier.return_value='com.apple.TextEdit'
+                bridge.return_value={'enabled':True,'smart_enabled':True,'accessibility_enabled':True,'epoch':4,'excluded':[]}
+                tracker.assistance.evaluate(result,b'one',b'doc')
+                tracker.respond_to_offer(True);start.assert_called_once_with()
+                self.assertIn(b'one',tracker.assistance.accepted)
+                start.reset_mock();tracker.assistance.active=(b'two',b'doc')
+                bridge.return_value={'enabled':False,'paused':True,'epoch':4}
+                tracker.respond_to_offer(True);start.assert_not_called()
+                tracker.assistance.active=(b'three',b'doc')
+                tracker.respond_to_offer(False);start.assert_not_called()
+        finally:tracker.close()
 
 
 if __name__ == '__main__':

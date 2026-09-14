@@ -1,5 +1,6 @@
 """An in-memory, one-shot approval transaction. No automatic cloud transmission."""
 import secrets
+from uuid import uuid4
 import threading
 import time
 import copy
@@ -20,6 +21,7 @@ class ContextSession:
             self.revision += 1
             self.token = None
             self.started = 0
+            self.source_id = None
             self.source = ''
             self.text = ''
             self.result = ''
@@ -35,6 +37,7 @@ class ContextSession:
             self.token = secrets.token_hex(24)
             self.started = self.clock()
             self.source = source
+            self.source_id = str(uuid4())
             self.status = 'reading'
             return self.token
 
@@ -97,4 +100,4 @@ class ContextSession:
                 self.token = None
                 self.status = 'error'
                 self.message = 'Local reading timed out. Select a smaller region and try again.'
-            return {key: copy.deepcopy(getattr(self, key)) for key in ('revision', 'source', 'text', 'result', 'message', 'method', 'status', 'extraction', 'structured')}
+            return {key: copy.deepcopy(getattr(self, key)) for key in ('revision', 'source_id', 'source', 'text', 'result', 'message', 'method', 'status', 'extraction', 'structured')}

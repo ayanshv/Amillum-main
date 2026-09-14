@@ -1,0 +1,13 @@
+**
+!backend/
+!backend/__init__.py
+!backend/api.py
+!backend/provider_engine.py
+!backend/requirements.txt
+!core/
+!core/__init__.py
+!core/privacy.py
+!services/
+!services/__init__.py
+!services/supabase.py
+!services/email_drafting.py

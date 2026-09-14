@@ -85,6 +85,11 @@ class FocusObserver:
         error, window = AX.AXUIElementCopyAttributeValue(self.application, 'AXFocusedWindow', None)
         if not error and window is not None:
             AX.AXObserverAddNotification(observer, window, 'AXTitleChanged', None)
+        error, focused = AX.AXUIElementCopyAttributeValue(self.application, 'AXFocusedUIElement', None)
+        if not error and focused is not None:
+            error, role = AX.AXUIElementCopyAttributeValue(focused, 'AXRole', None)
+            if not error and role in ('AXTextArea', 'AXStaticText'):
+                AX.AXObserverAddNotification(observer, focused, 'AXSelectedTextChanged', None)
         self.source = AX.AXObserverGetRunLoopSource(observer)
         CF.CFRunLoopAddSource(CF.CFRunLoopGetMain(), self.source, CF.kCFRunLoopCommonModes)
 
@@ -93,7 +98,7 @@ class FocusObserver:
             from PyObjCTools import AppHelper
             self.pending = True
             generation = self.generation
-            AppHelper.callLater(.2, self.deliver, generation)
+            AppHelper.callLater(.75 if str(notification)=='AXSelectedTextChanged' else .2, self.deliver, generation)
 
     def deliver(self, generation):
         if generation != self.generation:

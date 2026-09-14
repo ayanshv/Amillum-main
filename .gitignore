@@ -123,3 +123,6 @@ cache/
 *.swp
 *.swo
 *~
+
+# The empty configuration template is safe to version.
+!.env.example

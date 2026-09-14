@@ -34,18 +34,22 @@ app.add_static_files(
 
 
 
-ui.add_head_html('<link rel="stylesheet" href="/styles/styles.css?v=native-20260911">', shared=True)
+ui.add_head_html('<link rel="stylesheet" href="/styles/styles.css?v=auth-20260913">', shared=True)
 
 
-# Configure on import too: NiceGUI spawns a separate PyWebView process.
 from native import configure_desktop
 configure_desktop(app)
+app.native.start_args["private_mode"] = False
 
 from screens.home import home
 from screens.analysis import analyze
 from screens.info import info
 from screens.settings import settings
 from screens.context import context
+from screens.auth import authentication
+from screens.account import account_page
+from screens.workbench import workbench_page
+from services.supabase import storage_secret
 from components.errors import install_errors
 install_errors()
 
@@ -54,6 +58,8 @@ install_errors()
 if __name__ in ("__main__", "__mp_main__"):
     ui.run(
         title="Amillum",
+        host="127.0.0.1",
+        storage_secret=storage_secret(),
         window_size=(1080, 740),
         favicon=str(ROOT_DIR / 'icons' / 'AmicusIcon.ico'), # Safe file system fallback path
         native=True,

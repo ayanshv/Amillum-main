@@ -1,3 +1,4 @@
+from services.auth import protected, current, checked_operation
 """Privacy controls for the current stage; no placeholder capability switches."""
 
 from nicegui import ui
@@ -8,9 +9,13 @@ from core.context_awareness import get_state
 
 
 @ui.page('/settings')
+@protected
 def settings():
+    from services.supabase import get_account
+    account=get_account()
     state = get_state()
     def change(**kwargs):
+        if not current(account):return
         try:
             state.update(**kwargs)
         except ValueError as exc:
@@ -18,6 +23,7 @@ def settings():
         refresh()
 
     def exclude(identifier, remove=False):
+        if not current(account):return
         try:
             state.exclude(identifier.strip(), remove=remove)
             exclusions.refresh()
@@ -27,6 +33,7 @@ def settings():
             ui.notify(str(exc), type='warning')
 
     def exclude_domain(remove=False, value=None):
+        if not current(account):return
         try:
             state.exclude_domain(value or domain_input.value or '', remove=remove)
             domain_input.value = ''
@@ -89,9 +96,9 @@ def settings():
                     capture_label = ui.label()
                     ui.button('Set up region capture', on_click=state.request_capture_setup).props('outline')
                     ui.label('Used only after you click Read locally on a selected region and Accessibility text is unavailable. Local OCR reads that region; no recording stream or screenshot upload.').classes('body-copy')
-                    ui.switch('Smart Context · local title suggestions', value=state.smart_enabled,
+                    ui.switch('Automatic legal detection · local metadata', value=state.smart_enabled,
                         on_change=lambda e: change(smart_enabled=e.value))
-                    ui.label('With awareness and metadata enabled, checks document titles locally after privacy filtering. High-confidence legal titles show a quiet Amillum menu-bar indicator. Document bodies are not scanned automatically. Off at each launch.').classes('body-copy')
+                    ui.label('Uses titles and up to 1,200 accessible characters from the active context after privacy checks, locally and transiently. No text is saved, uploaded, or analyzed by AI. Medium confidence shows a quiet beaver; high confidence may offer Take a look or Not now. Repeated dismissals make offers less frequent. Reading for explanation still requires approval. Generic words alone do not trigger it. Off at each launch.').classes('body-copy')
                     suggestion_label = ui.label()
                     ui.label('Ask before reading · Always on').style('font-weight:600')
                     ui.label('Select → Read locally → review text → Explain. Sending to AI always needs a separate click.').classes('body-copy')

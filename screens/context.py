@@ -1,5 +1,9 @@
+from components.email_draft import email_draft_button
+from services.auth import protected, current, checked_operation
 """Review-only handoff from native selection. AI requires a separate button click."""
 from nicegui import ui, run
+from services.supabase import get_account
+from components.workbench import analysis_save_button
 from components.mascot import mascot
 from components.shell import shell
 from components.primitives import page_heading, empty_state
@@ -10,7 +14,9 @@ from screens.analysis import LANGUAGES
 
 
 @ui.page('/context')
+@protected
 def context(ask: bool = False):
+    account = get_account()
     state = get_state()
     rendered = [None]
 
@@ -35,7 +41,7 @@ def context(ask: bool = False):
             return
         refresh()
         try:
-            result=await run.io_bound(analyze_context,approved,user_question,chosen_language,
+            result=await run.io_bound(checked_operation, account, analyze_context,approved,user_question,chosen_language,
                                      lambda: state.analysis_valid(revision))
             state.context.finish_analysis(revision,result=format_result(result),structured=result)
         except Exception as exc:
@@ -77,7 +83,8 @@ def context(ask: bool = False):
                         ui.label('Amillum’s explanation').classes('card-heading')
                         ui.markdown(snapshot['result']).classes('amicus-markdown w-full')
                         ui.label('Information to help you understand, not legal advice. Verify important details.').classes('fine-print')
-                        ui.button('Add to Workbench').props('outline disable').tooltip('Workbench is not available yet. Nothing has been saved.')
+                        analysis_save_button(account,source={'id':snapshot['source_id'],'kind':'selection','title':('Selection · '+snapshot['source'])[:240]},structured=snapshot['structured'])
+                        email_draft_button(account,'selection')
                         question=ui.input('Ask Amillum',placeholder='Your follow-up question').props('outlined stack-label maxlength=2000').classes('w-full')
                         language=ui.select(LANGUAGES,value='English',label='Explanation language').props('outlined').classes('w-full')
                         ui.label('A follow-up sends this approved passage and your new question to Gemini.').classes('fine-print')

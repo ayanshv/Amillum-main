@@ -1,9 +1,11 @@
+from services.auth import protected, current, checked_operation
 from nicegui import ui
 from components.shell import shell
 from components.primitives import page_heading
 
 
 @ui.page('/info')
+@protected
 def info():
     with shell('info'):
         with ui.element('main').classes('studio-content'):

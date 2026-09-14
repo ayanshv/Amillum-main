@@ -18,3 +18,8 @@ pyobjc-framework-Vision==11.1; sys_platform == "darwin"
 pyobjc-framework-ScreenCaptureKit==11.1; sys_platform == "darwin"
 pyobjc-framework-CoreML==11.1; sys_platform == "darwin"
 pyobjc-framework-CoreMedia==11.1; sys_platform == "darwin"
+
+# Supabase Auth/PostgREST transport (one shared Python integration)
+httpx==0.28.1
+
+pyobjc-framework-Security==11.1; sys_platform == "darwin"
