@@ -1,7 +1,7 @@
 from components.email_draft import email_draft_button
 from services.auth import protected, current, checked_operation
 from nicegui import ui, run
-from services.supabase import get_account
+from services.supabase import get_account, PersistenceError
 from components.workbench import analysis_save_button
 from components.mascot import mascot
 from components.shell import shell
@@ -91,6 +91,8 @@ def analyze():
             elif workspace.extracted(revision, extracted_text):
                 result = await run.io_bound(checked_operation, account, analyze_document, extracted_text, question, language)
                 workspace.finish(revision, result=result or '', error='' if result else 'The analysis service returned no explanation. Please try again.')
+        except PersistenceError as exc:
+            workspace.finish(revision, error=str(exc))
         except Exception:
             workspace.finish(revision, error='We couldn’t analyze this document. Check your connection and analysis configuration, then try again.')
         # A client may have navigated back to Workspace. Its timer reads shared state.

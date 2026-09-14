@@ -45,7 +45,7 @@ User question to address: '''+json.dumps(question)
         raise ValueError('This interaction was cancelled. Nothing was sent.')
     if engine is None:
         from backend.analyze import analyze_document
-        engine=analyze_document
+        engine=lambda text,prompt,language:analyze_document(text,prompt,language,feature='contextual_assistance')
     raw=engine(text,prompt,language)
     if not valid():
         raise ValueError('This interaction was cancelled. The response was discarded.')

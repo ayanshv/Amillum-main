@@ -50,7 +50,7 @@ def account_page():
             ui.button('Restore saved exclusions',on_click=lambda:perform(restore_privacy,get_state())).props('outline')
             ui.button('Clear approved context',on_click=lambda:get_state().update(clear=True) if current(account) else None).props('outline')
         with ui.expansion('Delete account').classes('w-full'):
-            ui.label('Permanently removes your account, profile, saved settings and Workbench items. This cannot be undone. If stored files require backend removal, deletion will stop.').classes('body-copy')
+            ui.label('If you have a subscription, cancel it on the Amillum website and wait for cancellation to take effect first. Permanently removes your account, profile, saved settings and Workbench items. This cannot be undone. If stored files require backend removal, deletion will stop.').classes('body-copy')
             phrase=ui.input('Type DELETE MY ACCOUNT').props('autocomplete=off')
             delete_password=ui.input('Confirm current password',password=True)
             ui.button('Permanently delete my account',on_click=delete).props('outline color=negative')

@@ -7,7 +7,24 @@ from services.supabase import PersistenceError
 
 
 def email_draft_button(account,kind):
-    ui.button('Draft an email',icon='mail_outline',on_click=lambda:open_editor(account,kind)).props('outline no-caps')
+    async def begin():
+        from services.billing import refresh,website
+        button.disable()
+        try:
+            state=await run.io_bound(refresh,account)
+            feature=state['features']['email_drafting']
+            if not feature['enabled'] or feature['remaining']<=0:
+                with ui.dialog() as gate,ui.card().classes('email-editor'):
+                    ui.label('Email drafting' if not feature['enabled'] else 'Drafting allowance reached').classes('card-heading')
+                    ui.label('Create an editable email from content you approve. Compare eligible plans on the Amillum website.' if not feature['enabled'] else 'Your draft stays yours. Your allowance resets '+state['reset_at']+'. Manage your plan on the website.')
+                    if website():ui.link('Compare plans on Amillum ↗',website(),new_tab=True)
+                    ui.button('Close',on_click=gate.close).props('flat')
+                gate.open()
+                return
+            open_editor(account,kind)
+        except PersistenceError as exc:ui.notify(str(exc),type='warning')
+        finally:button.enable()
+    button=ui.button('Draft an email',icon='mail_outline',on_click=begin).props('outline no-caps')
 
 
 def open_editor(account,kind):

@@ -23,6 +23,8 @@ def shell(active):
                         ui.icon(icon, size='18px')
                         ui.label(title)
             with ui.column().classes('rail-bottom'):
+                from components.plan_status import plan_status
+                plan_status()
                 @ui.refreshable
                 def companion():
                     privacy=get_state().snapshot()

@@ -11,3 +11,7 @@
 !services/__init__.py
 !services/supabase.py
 !services/email_drafting.py
+!backend/billing.py
+!backend/catalog.py
+!backend/config/
+!backend/config/plans.json

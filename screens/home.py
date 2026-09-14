@@ -2,7 +2,7 @@ from components.email_draft import email_draft_button
 from services.auth import protected, current, checked_operation
 """The desktop's working surface: current document, result, and explicit actions."""
 from nicegui import ui, run
-from services.supabase import get_account
+from services.supabase import get_account, PersistenceError
 from components.workbench import analysis_save_button
 from components.mascot import mascot
 from components.shell import shell
@@ -32,8 +32,10 @@ def home():
             return
         refresh()
         try:
-            result = await run.io_bound(checked_operation, account, analyze_document, text, question.value, language)
+            result = await run.io_bound(checked_operation, account, analyze_document, text, question.value, language, 'ai_questions')
             workspace.finish(revision, result=result or '', error='' if result else 'No explanation was returned. Please try again.')
+        except PersistenceError as exc:
+            workspace.finish(revision, error=str(exc))
         except Exception:
             workspace.finish(revision, error='The analysis service is unavailable. You can retry your question or open Documents.')
 

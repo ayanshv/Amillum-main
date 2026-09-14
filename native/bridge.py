@@ -89,6 +89,10 @@ class BridgeServer:
                     elif message.get('op') == 'begin_context' and isinstance(message.get('payload'), dict):
                         from services.supabase import active_account
                         account=active_account()
+                        from services.billing import shortcut_allowed
+                        if account and account.user_id and not shortcut_allowed(account):
+                            send_message(connection, {'error':'The global shortcut requires a paid plan and a current connection. Open Amillum → Plans & billing.'})
+                            continue
                         send_message(connection, self.state.begin_context(message['payload']) if account and account.user_id else {'error':'Sign in to Amillum before selecting content.'})
                     elif message.get('op') == 'finish_context' and isinstance(message.get('payload'), dict):
                         send_message(connection, {'accepted': self.state.finish_context(message['payload'])})

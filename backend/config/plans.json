@@ -1,0 +1,382 @@
+[
+  {
+    "id": "free",
+    "name": "Free",
+    "price": 0,
+    "currency": "usd",
+    "interval": null,
+    "trial_days": 0,
+    "stripe_price_env": null,
+    "description": "A clear place to begin.",
+    "recommended": false,
+    "best_value": false,
+    "premium": false,
+    "rank": 0,
+    "early_access": false,
+    "features": {
+      "document_analysis": {
+        "enabled": true,
+        "limit": 5,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "contextual_assistance": {
+        "enabled": true,
+        "limit": 3,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "ai_questions": {
+        "enabled": true,
+        "limit": 10,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "legal_workbench": {
+        "enabled": true,
+        "limit": 20,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "advanced_workbench": {
+        "enabled": false,
+        "limit": 0,
+        "metered": false,
+        "available": false,
+        "trial_eligible": true
+      },
+      "advanced_analysis": {
+        "enabled": false,
+        "limit": 0,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "document_comparison": {
+        "enabled": false,
+        "limit": 0,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "email_drafting": {
+        "enabled": false,
+        "limit": 0,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "signature_workflow": {
+        "enabled": false,
+        "limit": 0,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "future_utilities": {
+        "enabled": false,
+        "limit": 0,
+        "metered": false,
+        "available": false,
+        "trial_eligible": true
+      },
+      "global_shortcut": {
+        "enabled": false,
+        "limit": 0,
+        "metered": false,
+        "available": true,
+        "trial_eligible": true
+      }
+    },
+    "rate_per_minute": 20
+  },
+  {
+    "id": "weekly",
+    "name": "Weekly",
+    "price": 500,
+    "currency": "usd",
+    "interval": "week",
+    "trial_days": 7,
+    "stripe_price_env": "STRIPE_PRICE_WEEKLY",
+    "description": "Flexible short-term access when you need Amillum right now.",
+    "recommended": false,
+    "best_value": false,
+    "premium": false,
+    "rank": 1,
+    "early_access": false,
+    "features": {
+      "document_analysis": {
+        "enabled": true,
+        "limit": 30,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "contextual_assistance": {
+        "enabled": true,
+        "limit": 30,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "ai_questions": {
+        "enabled": true,
+        "limit": 100,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "legal_workbench": {
+        "enabled": true,
+        "limit": 200,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "advanced_workbench": {
+        "enabled": false,
+        "limit": 0,
+        "metered": false,
+        "available": false,
+        "trial_eligible": true
+      },
+      "advanced_analysis": {
+        "enabled": true,
+        "limit": 10,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "document_comparison": {
+        "enabled": true,
+        "limit": 3,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "email_drafting": {
+        "enabled": true,
+        "limit": 20,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "signature_workflow": {
+        "enabled": false,
+        "limit": 0,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "future_utilities": {
+        "enabled": false,
+        "limit": 0,
+        "metered": false,
+        "available": false,
+        "trial_eligible": true
+      },
+      "global_shortcut": {
+        "enabled": true,
+        "limit": 1,
+        "metered": false,
+        "available": true,
+        "trial_eligible": true
+      }
+    },
+    "rate_per_minute": 30
+  },
+  {
+    "id": "monthly",
+    "name": "Monthly",
+    "price": 2400,
+    "currency": "usd",
+    "interval": "month",
+    "trial_days": 7,
+    "stripe_price_env": "STRIPE_PRICE_MONTHLY",
+    "description": "More room for regular questions, documents, and decisions.",
+    "recommended": true,
+    "best_value": true,
+    "premium": false,
+    "rank": 2,
+    "early_access": true,
+    "features": {
+      "document_analysis": {
+        "enabled": true,
+        "limit": 150,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "contextual_assistance": {
+        "enabled": true,
+        "limit": 150,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "ai_questions": {
+        "enabled": true,
+        "limit": 500,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "legal_workbench": {
+        "enabled": true,
+        "limit": 1000,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "advanced_workbench": {
+        "enabled": true,
+        "limit": 1,
+        "metered": false,
+        "available": false,
+        "trial_eligible": true
+      },
+      "advanced_analysis": {
+        "enabled": true,
+        "limit": 60,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "document_comparison": {
+        "enabled": true,
+        "limit": 30,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "email_drafting": {
+        "enabled": true,
+        "limit": 100,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "signature_workflow": {
+        "enabled": true,
+        "limit": 10,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "future_utilities": {
+        "enabled": true,
+        "limit": 1,
+        "metered": false,
+        "available": false,
+        "trial_eligible": true
+      },
+      "global_shortcut": {
+        "enabled": true,
+        "limit": 1,
+        "metered": false,
+        "available": true,
+        "trial_eligible": true
+      }
+    },
+    "rate_per_minute": 40
+  },
+  {
+    "id": "grand",
+    "name": "Grand",
+    "price": 3500,
+    "currency": "usd",
+    "interval": "week",
+    "trial_days": 7,
+    "stripe_price_env": "STRIPE_PRICE_GRAND",
+    "description": "Our highest allowances for people who use Amillum heavily.",
+    "recommended": false,
+    "best_value": false,
+    "premium": true,
+    "rank": 3,
+    "early_access": true,
+    "features": {
+      "document_analysis": {
+        "enabled": true,
+        "limit": 600,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "contextual_assistance": {
+        "enabled": true,
+        "limit": 600,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "ai_questions": {
+        "enabled": true,
+        "limit": 2000,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "legal_workbench": {
+        "enabled": true,
+        "limit": 5000,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "advanced_workbench": {
+        "enabled": true,
+        "limit": 1,
+        "metered": false,
+        "available": false,
+        "trial_eligible": true
+      },
+      "advanced_analysis": {
+        "enabled": true,
+        "limit": 300,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "document_comparison": {
+        "enabled": true,
+        "limit": 150,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "email_drafting": {
+        "enabled": true,
+        "limit": 500,
+        "metered": true,
+        "available": true,
+        "trial_eligible": true
+      },
+      "signature_workflow": {
+        "enabled": true,
+        "limit": 50,
+        "metered": true,
+        "available": false,
+        "trial_eligible": true
+      },
+      "future_utilities": {
+        "enabled": true,
+        "limit": 1,
+        "metered": false,
+        "available": false,
+        "trial_eligible": true
+      },
+      "global_shortcut": {
+        "enabled": true,
+        "limit": 1,
+        "metered": false,
+        "available": true,
+        "trial_eligible": true
+      }
+    },
+    "rate_per_minute": 60
+  }
+]
